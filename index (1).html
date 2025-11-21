@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Safefy MMN - Professional Edition</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Safefy Brand Colors */
+            --safefy-dark: #0A0E27;
+            --safefy-navy: #1A1A40;
+            --safefy-blue: #2E3B90;
+            --safefy-purple: #5B4E9B;
+            --safefy-cyan: #00D9FF;
+            --safefy-silver: #C0C0C0;
+            --safefy-gray: #666666;
+            --safefy-light: #F5F7FA;
+            
+            /* Functional Colors */
+            --success: #00D98E;
+            --warning: #FFB800;
+            --danger: #FF3366;
+            --info: #00C2FF;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #2E3B90 0%, #5B4E9B 100%);
+            --gradient-secondary: linear-gradient(135deg, #00D9FF 0%, #00A3CC 100%);
+            --gradient-dark: linear-gradient(180deg, #0A0E27 0%, #1A1A40 100%);
+            --gradient-cyber: linear-gradient(45deg, #2E3B90 0%, #00D9FF 50%, #5B4E9B 100%);
+            
+            /* Effects */
+            --glow-cyan: 0 0 20px rgba(0, 217, 255, 0.5);
+            --glow-purple: 0 0 20px rgba(91, 78, 155, 0.5);
+            --shadow-elevated: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gradient-dark);
+            color: var(--safefy-light);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .cyber-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(46, 59, 144, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(91, 78, 155, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(26, 26, 64, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-elevated);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-cyber);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: transparent;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            filter: drop-shadow(0 0 15px rgba(46, 59, 144, 0.6));
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-text h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: var(--safefy-silver);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-header {
+            padding: 8px 24px;
+            border: 2px solid var(--safefy-cyan);
+            background: transparent;
+            color: var(--safefy-cyan);
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .btn-header:hover {
+            background: var(--safefy-cyan);
+            color: var(--safefy-dark);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            background: rgba(26, 26, 64, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            box-shadow: var(--shadow-card);
+        }
+
+        .tabs-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tabs-nav::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .tabs-nav::-webkit-scrollbar-thumb {
+            background: var(--safefy-cyan);
+            border-radius: 3px;
+        }
+
+        .tab-btn {
+            padding: 11px 24px;
+            border: none;
+            background: transparent;
+            color: var(--safefy-silver);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--safefy-cyan);
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--glow-purple);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid var(--safefy-blue);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(26, 26, 64, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 217, 255, 0.4);
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--safefy-cyan);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--gradient-secondary);
+            border-radius: 2px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--safefy-light);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 11px 18px;
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            color: var(--safefy-light);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--safefy-cyan);
+            box-shadow: var(--glow-cyan);
+            background: rgba(10, 14, 39, 0.8);
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, var(--safefy-blue), var(--safefy-cyan));
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--safefy-cyan);
+            cursor: pointer;
+            box-shadow: var(--glow-cyan);
+            transition: all 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--safefy-cyan);
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .slider-value {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-left: 12px;
+            box-shadow: var(--glow-purple);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 16px 32px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-card);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-purple), var(--shadow-elevated);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid var(--safefy-cyan);
+            color: var(--safefy-cyan);
+        }
+
+        .btn-secondary:hover {
+            background: var(--safefy-cyan);
+            color: var(--safefy-dark);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Results Section */
+        .results {
+            background: linear-gradient(135deg, rgba(46, 59, 144, 0.3) 0%, rgba(0, 217, 255, 0.1) 100%);
+            border: 2px solid var(--safefy-cyan);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: var(--glow-cyan), var(--shadow-elevated);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .results-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow-cyan);
+            border-color: var(--safefy-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--safefy-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            background: rgba(10, 14, 39, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        thead {
+            background: var(--gradient-primary);
+        }
+
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            color: var(--safefy-light);
+        }
+
+        tbody tr {
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .total-row {
+            background: rgba(0, 217, 255, 0.1) !important;
+            font-weight: 700;
+        }
+
+        /* Comprometimento Panel */
+        .comprometimento-panel {
+            background: linear-gradient(135deg, rgba(255, 184, 0, 0.1) 0%, rgba(255, 51, 102, 0.1) 100%);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 35px;
+            margin: 30px 0;
+            box-shadow: 0 0 30px rgba(255, 184, 0, 0.2);
+        }
+
+        .comprometimento-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--warning);
+            margin-bottom: 16px;
+        }
+
+        .progress-container {
+            background: rgba(10, 14, 39, 0.8);
+            height: 50px;
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            margin: 25px 0;
+            border: 2px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .progress-comissoes {
+            background: linear-gradient(90deg, #FF3366, #FF6B9D);
+        }
+
+        .progress-empresa {
+            background: linear-gradient(90deg, #00D98E, #00B377);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-conservador { background: var(--success); color: white; }
+        .status-moderado { background: var(--warning); color: var(--safefy-dark); }
+        .status-agressivo { background: #FF6B35; color: white; }
+        .status-risco { background: var(--danger); color: white; }
+
+        /* Alerts */
+        .alert {
+            padding: 16px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(0, 194, 255, 0.1);
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .alert-warning {
+            background: rgba(255, 184, 0, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-success {
+            background: rgba(0, 217, 142, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Character Mascot */
+        .mascot-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 180px;
+            height: 180px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mascot-container:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .mascot-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .mascot-tooltip {
+            position: absolute;
+            top: -60px;
+            right: 0;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: var(--glow-purple);
+        }
+
+        .mascot-container:hover .mascot-tooltip {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(26, 26, 64, 0.4);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+            padding: 24px;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: 16px 20px 0 0;
+        }
+
+        footer p {
+            color: var(--safefy-silver);
+            margin: 8px 0;
+        }
+
+        /* Editable Cell */
+        .editable-cell {
+            background: rgba(10, 14, 39, 0.6);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            padding: 8px;
+            text-align: center;
+            color: var(--safefy-light);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .editable-cell:focus {
+            outline: none;
+            border-color: var(--safefy-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 217, 255, 0.2);
+            border-top-color: var(--safefy-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .mascot-container {
+                width: 120px;
+                height: 120px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+
+            .tabs-nav {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-30 { margin-top: 30px; }
+        .mb-30 { margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="cyber-background"></div>
+    <div class="cyber-grid"></div>
+
+    <!-- Mascot Character -->
+    <div class="mascot-container">
+        <div class="mascot-tooltip">💡 Precisa de ajuda?</div>
+        <img src="https://www.genspark.ai/api/files/s/DpseF52f" alt="Safefy SheShield" class="mascot-image">
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://www.genspark.ai/api/files/s/fTr2a79e" alt="Safefy Logo">
+                    </div>
+                    <div class="header-text">
+                        <h1>Safefy Calculadora MMN</h1>
+                        <p>Sistema Profissional de Análise de Marketing Multinível</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-header" onclick="toggleTheme()">🌙 Tema</button>
+                    <button class="btn-header" onclick="salvarPDF()">📄 Exportar</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <nav class="tabs-nav">
+            <button class="tab-btn active" onclick="showTab(0)">⚡ Calculadora Simples</button>
+            <button class="tab-btn" onclick="showTab(1)">🎛️ Calculadora Avançada</button>
+            <button class="tab-btn" onclick="showTab(2)">⚙️ Editor de Regras</button>
+            <button class="tab-btn" onclick="showTab(3)">📊 Análise Comparativa</button>
+            <button class="tab-btn" onclick="showTab(4)">📈 Sobre o Plano Safefy</button>
+        </nav>
+
+        <!-- Tab 1: Calculadora Simples -->
+        <div class="tab-content active" id="tab-0">
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">⚙️ Configuração Básica</h3>
+                    
+                    <div class="form-group">
+                        <label>👥 Número de Diretos</label>
+                        <input type="range" id="diretos-simples" min="1" max="200" value="10" oninput="updateSlider('diretos-simples')">
+                        <span class="slider-value" id="diretos-simples-value">10</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📊 Recrutas por Pessoa</label>
+                        <select id="recrutas-simples">
+                            <option value="1">1 pessoa cada</option>
+                            <option value="2">2 pessoas cada</option>
+                            <option value="3" selected>3 pessoas cada</option>
+                            <option value="4">4 pessoas cada</option>
+                            <option value="5">5 pessoas cada</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>💰 Valor da Compra (U$)</label>
+                        <input type="number" id="valor-compra-simples" value="200" min="1" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🏆 Sua Graduação</label>
+                        <select id="graduacao-simples">
+                            <option value="Member">🥉 Member (1-9 diretos)</option>
+                            <option value="Silver">🥈 Silver (10-24 diretos)</option>
+                            <option value="Gold">🥇 Gold (25-49 diretos)</option>
+                            <option value="Platinum">💎 Platinum (50-74 diretos)</option>
+                            <option value="Diamond">💎💎 Diamond (75-99 diretos)</option>
+                            <option value="Centurion" selected>👑 Centurion (100+ diretos)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" onclick="calcularSimples()">🧮 CALCULAR AGORA</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">📚 Referência - Plano Safefy</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Graduação</th>
+                                <th>Diretos</th>
+                                <th>Gerações</th>
+                                <th>% Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>🥉 Member</strong></td>
+                                <td>1-9</td>
+                                <td>2</td>
+                                <td>12%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🥈 Silver</strong></td>
+                                <td>10-24</td>
+                                <td>3</td>
+                                <td>15%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🥇 Gold</strong></td>
+                                <td>25-49</td>
+                                <td>4</td>
+                                <td>17%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>💎 Platinum</strong></td>
+                                <td>50-74</td>
+                                <td>5</td>
+                                <td>18%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>💎💎 Diamond</strong></td>
+                                <td>75-99</td>
+                                <td>6</td>
+                                <td>19%</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>👑 Centurion</strong></td>
+                                <td>100+</td>
+                                <td>7</td>
+                                <td>20%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-info">
+                        <strong>ℹ️ Estrutura de Comissões:</strong><br>
+                        1ª Geração: 7% | 2ª: 5% | 3ª: 3% | 4ª: 2%<br>
+                        5ª: 1% | 6ª: 1% | 7ª: 1%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div id="resultados-simples" class="hidden">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Tab 2: Calculadora Avançada -->
+        <div class="tab-content" id="tab-1">
+            <div class="card">
+                <h3 class="card-title">🎛️ Configuração Avançada (Taxas Mistas)</h3>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>👥 Número de Diretos</label>
+                        <input type="number" id="diretos-avancado" value="100" min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>💰 Valor da Compra (U$)</label>
+                        <input type="number" id="valor-compra-avancado" value="200" min="1" step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🏆 Sua Graduação</label>
+                    <select id="graduacao-avancado">
+                        <option value="Member">🥉 Member (1-9 diretos)</option>
+                        <option value="Silver">🥈 Silver (10-24 diretos)</option>
+                        <option value="Gold">🥇 Gold (25-49 diretos)</option>
+                        <option value="Platinum">💎 Platinum (50-74 diretos)</option>
+                        <option value="Diamond">💎💎 Diamond (75-99 diretos)</option>
+                        <option value="Centurion" selected>👑 Centurion (100+ diretos)</option>
+                    </select>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--safefy-cyan);">📊 Distribuição de Produtores na Rede</h4>
+                
+                <div class="form-group">
+                    <label>🔥 % que recrutam 3 pessoas (Produtores Ativos)</label>
+                    <input type="range" id="taxa-3" min="0" max="100" value="30" oninput="updateTaxas()">
+                    <span class="slider-value" id="taxa-3-value">30%</span>
+                </div>
+
+                <div class="form-group">
+                    <label>⚡ % que recrutam 2 pessoas (Produtores Moderados)</label>
+                    <input type="range" id="taxa-2" min="0" max="100" value="20" oninput="updateTaxas()">
+                    <span class="slider-value" id="taxa-2-value">20%</span>
+                </div>
+
+                <div class="form-group">
+                    <label>💧 % que recrutam 1 pessoa (Produtores Básicos - Automático)</label>
+                    <input type="range" id="taxa-1" min="0" max="100" value="50" disabled>
+                    <span class="slider-value" id="taxa-1-value">50%</span>
+                </div>
+
+                <div id="alerta-taxa" class="alert alert-warning hidden">
+                    ⚠️ As porcentagens devem somar 100%
+                </div>
+
+                <button class="btn-primary" onclick="calcularAvancado()">🚀 CALCULAR CENÁRIO AVANÇADO</button>
+            </div>
+
+            <div id="resultados-avancado" class="hidden">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Tab 3: Editor de Regras -->
+        <div class="tab-content" id="tab-2">
+            <div class="alert alert-warning">
+                ⚠️ <strong>Atenção:</strong> Alterações aqui afetam todos os cálculos. Use com cautela!
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">⚙️ Percentuais de Comissão por Graduação</h3>
+                <p style="margin-bottom: 16px; color: var(--safefy-silver);">Clique nas células para editar os percentuais de cada geração:</p>
+                
+                <div style="overflow-x: auto;">
+                    <table id="tabela-regras">
+                        <thead>
+                            <tr>
+                                <th>Graduação</th>
+                                <th>1ª Gen</th>
+                                <th>2ª Gen</th>
+                                <th>3ª Gen</th>
+                                <th>4ª Gen</th>
+                                <th>5ª Gen</th>
+                                <th>6ª Gen</th>
+                                <th>7ª Gen</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-regras">
+                            <!-- Preenchido por JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 25px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn-primary" onclick="aplicarRegras()" style="flex: 1; min-width: 200px;">✅ Aplicar Alterações</button>
+                    <button class="btn-primary btn-secondary" onclick="resetarRegras()" style="flex: 1; min-width: 200px;">🔄 Resetar Safefy</button>
+                    <button class="btn-primary btn-secondary" onclick="salvarCustomizado()" style="flex: 1; min-width: 200px;">💾 Salvar Custom</button>
+                </div>
+            </div>
+
+            <div id="validacao-regras" class="comprometimento-panel">
+                <!-- Validação em tempo real -->
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">📚 Templates Pré-configurados</h3>
+                <div class="grid-3">
+                    <button class="btn-primary" onclick="carregarTemplate('safefy')">📘 Plano Safefy</button>
+                    <button class="btn-primary btn-secondary" onclick="carregarTemplate('conservador')">📗 Conservador</button>
+                    <button class="btn-primary btn-secondary" onclick="carregarTemplate('agressivo')">📙 Agressivo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Análise Comparativa -->
+        <div class="tab-content" id="tab-3">
+            <div class="card">
+                <h3 class="card-title">📊 Análise Comparativa de Cenários</h3>
+                <div class="alert alert-info">
+                    💡 Compare diferentes estratégias lado a lado para tomar a melhor decisão.
+                </div>
+                
+                <p style="color: var(--safefy-silver); text-align: center; padding: 40px;">
+                    🚧 Esta funcionalidade permite comparar múltiplos cenários simultaneamente.<br>
+                    Use as calculadoras Simples e Avançada para criar cenários e visualize os resultados aqui.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab 5: Sobre o Plano -->
+        <div class="tab-content" id="tab-4">
+            <div class="card">
+                <h3 class="card-title">📈 Sobre o Plano de Remuneração Safefy</h3>
+                
+                <div class="alert alert-info">
+                    <strong>🎯 Filosofia do Plano:</strong> Equilibrar remuneração atrativa com sustentabilidade empresarial de longo prazo.
+                </div>
+
+                <h4 style="color: var(--safefy-cyan); margin: 30px 0 20px;">🏆 Estrutura de Graduações</h4>
+                
+                <div class="grid-2">
+                    <div class="stat-card">
+                        <div class="stat-label">🥉 MEMBER</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">1-9 diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">2 gerações • 12% total</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">🥈 SILVER</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">10-24 diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">3 gerações • 15% total</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">🥇 GOLD</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">25-49 diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">4 gerações • 17% total</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">💎 PLATINUM</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">50-74 diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">5 gerações • 18% total</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">💎💎 DIAMOND</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">75-99 diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">6 gerações • 19% total</p>
+                    </div>
+                    
+                    <div class="stat-card" style="border: 2px solid var(--safefy-cyan);">
+                        <div class="stat-label">👑 CENTURION</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">100+ diretos</div>
+                        <p style="color: var(--safefy-silver); margin-top: 10px;">7 gerações • 20% total</p>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--safefy-cyan); margin: 30px 0 20px;">💰 Estrutura de Comissões</h4>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Geração</th>
+                            <th>Percentual</th>
+                            <th>Exemplo (U$ 200)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1ª Geração</td><td><strong>7%</strong></td><td>U$ 14,00</td></tr>
+                        <tr><td>2ª Geração</td><td><strong>5%</strong></td><td>U$ 10,00</td></tr>
+                        <tr><td>3ª Geração</td><td><strong>3%</strong></td><td>U$ 6,00</td></tr>
+                        <tr><td>4ª Geração</td><td><strong>2%</strong></td><td>U$ 4,00</td></tr>
+                        <tr><td>5ª Geração</td><td><strong>1%</strong></td><td>U$ 2,00</td></tr>
+                        <tr><td>6ª Geração</td><td><strong>1%</strong></td><td>U$ 2,00</td></tr>
+                        <tr><td>7ª Geração</td><td><strong>1%</strong></td><td>U$ 2,00</td></tr>
+                        <tr class="total-row"><td><strong>TOTAL</strong></td><td><strong>20%</strong></td><td><strong>U$ 40,00</strong></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-success" style="margin-top: 30px;">
+                    <strong>✅ Análise de Sustentabilidade:</strong><br><br>
+                    • Comprometimento máximo: 20% (Moderado/Saudável)<br>
+                    • Margem empresa: 80% (Muito boa para operação e crescimento)<br>
+                    • Classificação: ⭐⭐⭐⭐⭐ Excelente sustentabilidade<br>
+                    • Benchmarking: Acima da média conservadora (12%), ideal para atração de talentos
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>🛡️ Safefy Calculadora MMN v2.0 Professional Edition</strong></p>
+            <p style="margin-top: 10px;">Desenvolvida com tecnologia de ponta para análise profissional de Marketing Multinível</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                © 2024 Safefy. Todos os cálculos são estimativas baseadas nos dados fornecidos.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuração Global de Regras (Safefy)
+        let regrasSafefy = {
+            Member: { geracoes: 2, percentuais: [7, 5, 0, 0, 0, 0, 0] },
+            Silver: { geracoes: 3, percentuais: [7, 5, 3, 0, 0, 0, 0] },
+            Gold: { geracoes: 4, percentuais: [7, 5, 3, 2, 0, 0, 0] },
+            Platinum: { geracoes: 5, percentuais: [7, 5, 3, 2, 1, 0, 0] },
+            Diamond: { geracoes: 6, percentuais: [7, 5, 3, 2, 1, 1, 0] },
+            Centurion: { geracoes: 7, percentuais: [7, 5, 3, 2, 1, 1, 1] }
+        };
+
+        let regrasCustomizadas = JSON.parse(JSON.stringify(regrasSafefy));
+        let usandoCustomizado = false;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSlider('diretos-simples');
+            updateTaxas();
+            renderTabelaRegras();
+            carregarConfiguracoesSalvas();
+        });
+
+        // Navegação entre Tabs
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+
+        // Theme Toggle (preparado para dark mode adicional)
+        function toggleTheme() {
+            alert('🎨 Funcionalidade de tema alternativo em desenvolvimento!');
+        }
+
+        // Update Sliders
+        function updateSlider(id) {
+            const slider = document.getElementById(id);
+            const valueSpan = document.getElementById(id + '-value');
+            valueSpan.textContent = slider.value;
+        }
+
+        // Update Taxas (Avançado)
+        function updateTaxas() {
+            const taxa3 = parseInt(document.getElementById('taxa-3').value);
+            const taxa2 = parseInt(document.getElementById('taxa-2').value);
+            const taxa1 = 100 - taxa3 - taxa2;
+            
+            document.getElementById('taxa-3-value').textContent = taxa3 + '%';
+            document.getElementById('taxa-2-value').textContent = taxa2 + '%';
+            document.getElementById('taxa-1-value').textContent = taxa1 + '%';
+            document.getElementById('taxa-1').value = taxa1;
+            
+            const alerta = document.getElementById('alerta-taxa');
+            if (taxa1 < 0) {
+                alerta.classList.remove('hidden');
+                document.getElementById('taxa-2').value = 100 - taxa3;
+                updateTaxas();
+            } else {
+                alerta.classList.add('hidden');
+            }
+        }
+
+        // Calcular Simples
+        function calcularSimples() {
+            const diretos = parseInt(document.getElementById('diretos-simples').value);
+            const recrutasPorPessoa = parseInt(document.getElementById('recrutas-simples').value);
+            const valorCompra = parseFloat(document.getElementById('valor-compra-simples').value);
+            const graduacao = document.getElementById('graduacao-simples').value;
+            
+            const regras = usandoCustomizado ? regrasCustomizadas : regrasSafefy;
+            const config = regras[graduacao];
+            
+            // Calcular gerações
+            let geracoes = [];
+            
+            for (let i = 0; i < config.geracoes; i++) {
+                const pessoas = i === 0 ? diretos : geracoes[i-1].pessoas * recrutasPorPessoa;
+                const vendas = pessoas * valorCompra;
+                const percentual = config.percentuais[i];
+                const comissao = vendas * (percentual / 100);
+                
+                geracoes.push({
+                    numero: i + 1,
+                    pessoas: pessoas,
+                    vendas: vendas,
+                    percentual: percentual,
+                    comissao: comissao,
+                    acumulado: geracoes.reduce((sum, g) => sum + g.comissao, 0) + comissao
+                });
+            }
+            
+            const totalPessoas = geracoes.reduce((sum, g) => sum + g.pessoas, 0);
+            const totalVendas = geracoes.reduce((sum, g) => sum + g.vendas, 0);
+            const totalComissao = geracoes.reduce((sum, g) => sum + g.comissao, 0);
+            
+            const comprometimento = calcularComprometimento(config.percentuais, valorCompra);
+            
+            renderResultados('resultados-simples', {
+                geracoes,
+                totalPessoas,
+                totalVendas,
+                totalComissao,
+                valorCompra,
+                comprometimento
+            });
+        }
+
+        // Calcular Avançado
+        function calcularAvancado() {
+            const diretos = parseInt(document.getElementById('diretos-avancado').value);
+            const valorCompra = parseFloat(document.getElementById('valor-compra-avancado').value);
+            const graduacao = document.getElementById('graduacao-avancado').value;
+            const taxa3 = parseInt(document.getElementById('taxa-3').value) / 100;
+            const taxa2 = parseInt(document.getElementById('taxa-2').value) / 100;
+            const taxa1 = parseInt(document.getElementById('taxa-1').value) / 100;
+            
+            const regras = usandoCustomizado ? regrasCustomizadas : regrasSafefy;
+            const config = regras[graduacao];
+            
+            let geracoes = [];
+            let geracaoAnterior = diretos;
+            
+            for (let i = 0; i < config.geracoes; i++) {
+                let pessoas;
+                if (i === 0) {
+                    pessoas = diretos;
+                } else {
+                    const taxaMedia = (taxa3 * 3) + (taxa2 * 2) + (taxa1 * 1);
+                    pessoas = Math.round(geracaoAnterior * taxaMedia);
+                }
+                
+                const vendas = pessoas * valorCompra;
+                const percentual = config.percentuais[i];
+                const comissao = vendas * (percentual / 100);
+                
+                geracoes.push({
+                    numero: i + 1,
+                    pessoas: pessoas,
+                    vendas: vendas,
+                    percentual: percentual,
+                    comissao: comissao,
+                    acumulado: geracoes.reduce((sum, g) => sum + g.comissao, 0) + comissao
+                });
+                
+                geracaoAnterior = pessoas;
+            }
+            
+            const totalPessoas = geracoes.reduce((sum, g) => sum + g.pessoas, 0);
+            const totalVendas = geracoes.reduce((sum, g) => sum + g.vendas, 0);
+            const totalComissao = geracoes.reduce((sum, g) => sum + g.comissao, 0);
+            
+            const comprometimento = calcularComprometimento(config.percentuais, valorCompra);
+            
+            renderResultados('resultados-avancado', {
+                geracoes,
+                totalPessoas,
+                totalVendas,
+                totalComissao,
+                valorCompra,
+                comprometimento,
+                taxas: { taxa3: taxa3*100, taxa2: taxa2*100, taxa1: taxa1*100 }
+            });
+        }
+
+        // Calcular Comprometimento
+        function calcularComprometimento(percentuais, valorCompra) {
+            const totalPercent = percentuais.reduce((sum, p) => sum + p, 0);
+            const valorComissoes = (valorCompra * totalPercent) / 100;
+            const margemEmpresa = valorCompra - valorComissoes;
+            const percentualEmpresa = ((margemEmpresa / valorCompra) * 100).toFixed(2);
+            
+            let status, emoji, cor;
+            if (totalPercent <= 15) {
+                status = 'Conservador';
+                emoji = '🟢';
+                cor = 'status-conservador';
+            } else if (totalPercent <= 20) {
+                status = 'Moderado/Saudável';
+                emoji = '🟡';
+                cor = 'status-moderado';
+            } else if (totalPercent <= 25) {
+                status = 'Agressivo';
+                emoji = '🟠';
+                cor = 'status-agressivo';
+            } else {
+                status = 'Alto Risco';
+                emoji = '🔴';
+                cor = 'status-risco';
+            }
+            
+            return {
+                percentualTotal: totalPercent,
+                valorComissoes: valorComissoes,
+                margemEmpresa: margemEmpresa,
+                percentualEmpresa: parseFloat(percentualEmpresa),
+                status: status,
+                emoji: emoji,
+                cor: cor,
+                detalhes: percentuais.map((p, i) => ({
+                    geracao: i + 1,
+                    percentual: p,
+                    valor: (valorCompra * p) / 100
+                })).filter(d => d.percentual > 0)
+            };
+        }
+
+        // Renderizar Resultados
+        function renderResultados(containerId, data) {
+            const container = document.getElementById(containerId);
+            const comp = data.comprometimento;
+            
+            let html = `
+                <div class="results">
+                    <h2 class="results-title">🎯 Resultados da Simulação</h2>
+                    
+                    <div class="grid-3">
+                        <div class="stat-card">
+                            <div class="stat-label">👥 Total de Pessoas</div>
+                            <div class="stat-value">${data.totalPessoas.toLocaleString('pt-BR')}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">💰 Volume Total</div>
+                            <div class="stat-value">U$ ${data.totalVendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">💵 Seu Ganho</div>
+                            <div class="stat-value">U$ ${data.totalComissao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 35px 0 20px; color: var(--safefy-cyan); text-align: center;">📋 Detalhamento por Geração</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Geração</th>
+                                <th>Pessoas</th>
+                                <th>%</th>
+                                <th>Vendas</th>
+                                <th>Sua Comissão</th>
+                                <th>Acumulado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            data.geracoes.forEach(g => {
+                html += `
+                    <tr>
+                        <td><strong>${g.numero}ª</strong></td>
+                        <td>${g.pessoas.toLocaleString('pt-BR')}</td>
+                        <td>${g.percentual}%</td>
+                        <td>U$ ${g.vendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td><strong>U$ ${g.comissao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                        <td>U$ ${g.acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        <tr class="total-row">
+                            <td><strong>TOTAL</strong></td>
+                            <td><strong>${data.totalPessoas.toLocaleString('pt-BR')}</strong></td>
+                            <td>-</td>
+                            <td><strong>U$ ${data.totalVendas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                            <td><strong>U$ ${data.totalComissao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            
+            // Painel de Comprometimento
+            html += `
+                <div class="comprometimento-panel">
+                    <h3 class="comprometimento-title">💰 Análise de Comprometimento</h3>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <p style="font-size: 1.3rem; font-weight: 600; color: white;">
+                            Valor da Compra: <span style="color: var(--safefy-cyan);">U$ ${data.valorCompra.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                        </p>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar progress-comissoes" style="width: ${comp.percentualTotal}%">
+                            ${comp.percentualTotal}%
+                        </div>
+                        <div class="progress-bar progress-empresa" style="width: ${comp.percentualEmpresa}%">
+                            ${comp.percentualEmpresa}%
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 40px; margin: 25px 0;">
+                        <div style="text-align: center;">
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Comissões Rede</p>
+                            <p style="font-size: 1.8rem; font-weight: 800; color: #FF6B9D;">U$ ${comp.valorComissoes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Margem Empresa</p>
+                            <p style="font-size: 1.8rem; font-weight: 800; color: #00D98E;">U$ ${comp.margemEmpresa.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 25px 0;">
+                        <span class="status-badge ${comp.cor}">${comp.emoji} ${comp.status}</span>
+                    </div>
+                    
+                    <h4 style="margin: 30px 0 20px; color: white; text-align: center;">📊 Detalhamento das Comissões</h4>
+                    <table style="background: rgba(10, 14, 39, 0.8);">
+                        <thead>
+                            <tr>
+                                <th>Geração</th>
+                                <th>%</th>
+                                <th>Valor</th>
+                                <th>% do Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            comp.detalhes.forEach(d => {
+                const percentDoTotal = ((d.valor / comp.valorComissoes) * 100).toFixed(1);
+                html += `
+                    <tr>
+                        <td>${d.geracao}ª</td>
+                        <td>${d.percentual}%</td>
+                        <td>U$ ${d.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>${percentDoTotal}%</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        <tr class="total-row">
+                            <td><strong>TOTAL</strong></td>
+                            <td><strong>${comp.percentualTotal}%</strong></td>
+                            <td><strong>U$ ${comp.valorComissoes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                            <td><strong>100%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert ${comp.percentualTotal <= 20 ? 'alert-success' : comp.percentualTotal <= 25 ? 'alert-warning' : 'alert-danger'}" style="margin-top: 25px;">
+                    <strong>⚖️ Análise de Sustentabilidade:</strong><br><br>
+                    • Comprometimento: ${comp.percentualTotal}% (${comp.status})<br>
+                    • Margem empresa: ${comp.percentualEmpresa}% ${comp.percentualEmpresa >= 70 ? '✅ Saudável' : '⚠️ Ajustar'}<br>
+                    • ${comp.percentualTotal < 30 ? '✅ Abaixo do limite de risco (30%)' : '❌ ATENÇÃO: Acima do limite!'}<br><br>
+                    <strong>📊 Referência:</strong> Conservador: 8-12% | Moderado: 15-20% | Agressivo: 25-30%
+                </div>
+            </div>
+            `;
+            
+            if (data.taxas) {
+                html += `
+                    <div class="alert alert-info" style="margin-top: 25px;">
+                        <strong>📊 Distribuição Realista Aplicada:</strong><br>
+                        🔥 ${data.taxas.taxa3}% recrutam 3 pessoas • ⚡ ${data.taxas.taxa2}% recrutam 2 pessoas • 💧 ${data.taxas.taxa1}% recrutam 1 pessoa
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            container.innerHTML = html;
+            container.classList.remove('hidden');
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Editor de Regras
+        function renderTabelaRegras() {
+            const tbody = document.getElementById('tbody-regras');
+            const regras = usandoCustomizado ? regrasCustomizadas : regrasSafefy;
+            
+            let html = '';
+            for (let graduacao in regras) {
+                const config = regras[graduacao];
+                const total = config.percentuais.reduce((sum, p) => sum + p, 0);
+                
+                html += `<tr><td><strong>${graduacao}</strong></td>`;
+                
+                for (let i = 0; i < 7; i++) {
+                    const valor = config.percentuais[i];
+                    if (i < config.geracoes) {
+                        html += `<td><input type="number" class="editable-cell" value="${valor}" min="0" max="100" step="0.5" 
+                                 onchange="atualizarPercentual('${graduacao}', ${i}, this.value)"></td>`;
+                    } else {
+                        html += `<td style="background: rgba(0,0,0,0.3); color: #666;">-</td>`;
+                    }
+                }
+                
+                html += `<td><strong>${total}%</strong></td></tr>`;
+            }
+            
+            tbody.innerHTML = html;
+            validarRegras();
+        }
+
+        function atualizarPercentual(graduacao, geracao, valor) {
+            const regras = usandoCustomizado ? regrasCustomizadas : regrasSafefy;
+            regras[graduacao].percentuais[geracao] = parseFloat(valor);
+            renderTabelaRegras();
+        }
+
+        function validarRegras() {
+            const container = document.getElementById('validacao-regras');
+            const regras = usandoCustomizado ? regrasCustomizadas : regrasSafefy;
+            const centurion = regras.Centurion;
+            const comp = calcularComprometimento(centurion.percentuais, 200);
+            
+            let html = `
+                <h3 class="comprometimento-title">⚠️ Validador de Comprometimento</h3>
+                <p style="text-align: center; color: white; margin: 15px 0;">Cenário: Centurion com 7 gerações ativas</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" style="background: ${comp.percentualTotal <= 20 ? 'var(--success)' : comp.percentualTotal <= 25 ? 'var(--warning)' : 'var(--danger)'}; width: ${comp.percentualTotal}%">
+                        ${comp.percentualTotal}%
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 25px 0;">
+                    <span class="status-badge ${comp.cor}">${comp.emoji} ${comp.status}</span>
+                </div>
+                
+                <div class="alert ${comp.percentualTotal > 30 ? 'alert-danger' : comp.percentualTotal > 25 ? 'alert-warning' : 'alert-success'}">
+                    ${comp.percentualTotal <= 15 ? '⚠️ Muito conservador. Pode ser pouco atrativo.' : ''}
+                    ${comp.percentualTotal > 15 && comp.percentualTotal <= 20 ? '✅ ÓTIMO! Plano equilibrado e sustentável.' : ''}
+                    ${comp.percentualTotal > 20 && comp.percentualTotal <= 25 ? '⚠️ Agressivo. Monitore a margem.' : ''}
+                    ${comp.percentualTotal > 25 && comp.percentualTotal <= 30 ? '🔴 Alto risco. Margem apertada.' : ''}
+                    ${comp.percentualTotal > 30 ? '❌ INSUSTENTÁVEL! Apenas ' + comp.percentualEmpresa + '% para empresa.' : ''}
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function aplicarRegras() {
+            usandoCustomizado = true;
+            alert('✅ Regras personalizadas aplicadas com sucesso!');
+            salvarConfiguracoes();
+        }
+
+        function resetarRegras() {
+            if (confirm('Resetar para valores padrão Safefy?')) {
+                regrasCustomizadas = JSON.parse(JSON.stringify(regrasSafefy));
+                usandoCustomizado = false;
+                renderTabelaRegras();
+                alert('🔄 Regras resetadas!');
+            }
+        }
+
+        function salvarCustomizado() {
+            localStorage.setItem('regrasCustomizadas', JSON.stringify(regrasCustomizadas));
+            alert('💾 Configuração salva!');
+        }
+
+        function carregarTemplate(tipo) {
+            let novasRegras = {};
+            
+            if (tipo === 'safefy') {
+                novasRegras = JSON.parse(JSON.stringify(regrasSafefy));
+            } else if (tipo === 'conservador') {
+                novasRegras = {
+                    Member: { geracoes: 2, percentuais: [5, 3, 0, 0, 0, 0, 0] },
+                    Silver: { geracoes: 3, percentuais: [5, 3, 2, 0, 0, 0, 0] },
+                    Gold: { geracoes: 4, percentuais: [5, 3, 2, 1, 0, 0, 0] },
+                    Platinum: { geracoes: 5, percentuais: [5, 3, 2, 1, 0.5, 0, 0] },
+                    Diamond: { geracoes: 6, percentuais: [5, 3, 2, 1, 0.5, 0.5, 0] },
+                    Centurion: { geracoes: 7, percentuais: [5, 3, 2, 1, 0.5, 0.5, 0.5] }
+                };
+            } else if (tipo === 'agressivo') {
+                novasRegras = {
+                    Member: { geracoes: 2, percentuais: [10, 7, 0, 0, 0, 0, 0] },
+                    Silver: { geracoes: 3, percentuais: [10, 7, 5, 0, 0, 0, 0] },
+                    Gold: { geracoes: 4, percentuais: [10, 7, 5, 3, 0, 0, 0] },
+                    Platinum: { geracoes: 5, percentuais: [10, 7, 5, 3, 2, 0, 0] },
+                    Diamond: { geracoes: 6, percentuais: [10, 7, 5, 3, 2, 1, 0] },
+                    Centurion: { geracoes: 7, percentuais: [10, 7, 5, 3, 2, 1, 1] }
+                };
+            }
+            
+            regrasCustomizadas = novasRegras;
+            usandoCustomizado = true;
+            renderTabelaRegras();
+            alert(`📘 Template "${tipo}" carregado!`);
+        }
+
+        // Storage
+        function salvarConfiguracoes() {
+            localStorage.setItem('regrasCustomizadas', JSON.stringify(regrasCustomizadas));
+            localStorage.setItem('usandoCustomizado', usandoCustomizado);
+        }
+
+        function carregarConfiguracoesSalvas() {
+            const regras = localStorage.getItem('regrasCustomizadas');
+            if (regras) {
+                regrasCustomizadas = JSON.parse(regras);
+            }
+            
+            const usando = localStorage.getItem('usandoCustomizado');
+            if (usando === 'true') {
+                usandoCustomizado = true;
+            }
+        }
+
+        // Exportar PDF (placeholder)
+        function salvarPDF() {
+            alert('📄 Funcionalidade de exportação em PDF será implementada em breve!');
+        }
+    </script>
+</body>
+</html>
